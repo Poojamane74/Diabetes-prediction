@@ -40,6 +40,3 @@ This project uses the *PIMA Indians Diabetes Dataset*, which contains:
 
 ## ⭐ Support
 If you like this project, please give it a *star ⭐ on GitHub!*
-
-## ⭐ Support
-If you like this project, please give it a *star ⭐ on GitHub!*
