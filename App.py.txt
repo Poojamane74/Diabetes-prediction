@@ -1,0 +1,51 @@
+import streamlit as st
+import pandas as pd
+import numpy as np
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+
+# Load dataset
+data = pd.read_csv("diabetes.csv")
+
+# Replace zeros with NaN for some columns
+cols = ['Glucose','BloodPressure','SkinThickness','Insulin','BMI']
+data[cols] = data[cols].replace(0, np.nan)
+for col in cols:
+    data[col].fillna(data[col].median(), inplace=True)
+
+# Split into features and target
+X = data.drop('Outcome', axis=1)
+y = data['Outcome']
+
+# Scale features
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# Train model
+model = LogisticRegression()
+model.fit(X_scaled, y)
+
+# Streamlit UI
+st.title("🩺 Diabetes Prediction App")
+st.write("Enter your details to check if you are at risk of diabetes")
+
+# Input fields
+preg = st.number_input("Pregnancies", 0, 20, 1)
+glu = st.number_input("Glucose", 0, 200, 100)
+bp = st.number_input("Blood Pressure", 0, 150, 70)
+skin = st.number_input("Skin Thickness", 0, 100, 20)
+insulin = st.number_input("Insulin", 0, 900, 80)
+bmi = st.number_input("BMI", 0.0, 70.0, 25.0)
+dpf = st.number_input("Diabetes Pedigree Function", 0.0, 3.0, 0.5)
+age = st.number_input("Age", 1, 100, 30)
+
+# Predict button
+if st.button("Predict"):
+    user_data = np.array([[preg, glu, bp, skin, insulin, bmi, dpf, age]])
+    user_data_scaled = scaler.transform(user_data)
+    prediction = model.predict(user_data_scaled)
+    
+    if prediction[0] == 1:
+        st.error("⚠️ You may have Diabetes. Please consult a doctor.")
+    else:
+        st.success("✅ You are not likely to have Diabetes.")
